@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mushi Server T3</title>
+    <link rel="icon" href="assets/icon.png" type="image/png">
+    <style>
+
+        /* Fuentes */
+    @font-face {
+        font-family: 'Minecraft';
+        src: url('assets/minecraft.woff2') format('woff2');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+    }
+    
+    @font-face {
+        font-family: 'MinecraftLegible';
+        src: url('assets/minecraft-legible.woff2') format('woff2');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    /* Color general */
+    body, 
+    p, h1, h2, h3, h4, h5, h6,
+    .section-title, .section-subtitle,
+    .card, .list-item, .spec-label, .spec-value,
+    .event-label, .event-date, .upload-note,
+    .sidebar-item, .nav-menu a {
+        color: #ffffff !important;
+        font-family: 'MinecraftLegible', Arial, sans-serif;
+    }
+
+    /* Títulos con fuente minecraft pura */
+    .page-title, .section-title, .section-subtitle,
+    .minecraft-button, .logo {
+        font-family: 'Minecraft', 'MinecraftLegible', Arial, sans-serif;
+    }
+
+    /* Enlaces */
+    a:not(.minecraft-button) {
+    color: #ffffff !important;  /* Cambiado de #5af a #ffffff (blanco) */
+    text-decoration: none;
+    transition: opacity 0.2s;   /* Cambiado de color a opacity para el hover */
+}
+
+a:not(.minecraft-button):hover {
+    opacity: 0.8;               /* Efecto hover más sutil con opacidad */
+    text-decoration: underline;
+}
+
+    /* Botones */
+    .minecraft-button {
+        color: white !important;
+        font-family: 'Minecraft', 'MinecraftLegible', Arial, sans-serif;
+    }
+
+    /* Ajustes para mejor legibilidad */
+    p, li {
+        line-height: 1.6;
+        font-size: 16px;
+    }
+
+    /* Contraste mejorado */
+    .card {
+        background-color: rgba(61, 61, 59, 0.8);
+        backdrop-filter: blur(4px);
+    }
+
+        /* Mejora para los botones */
+            .minecraft-button {
+                min-width: 160px; /* Ancho mínimo para consistencia */
+                text-align: center;
+                margin: 10px 0; /* Margen superior/inferior */
+            }
+
+            /* Contenedor flexible para botones */
+            .button-group {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 16px;
+                margin-top: 24px;
+            }
+
+
+            /* Base styles - Añade esto al inicio de tu CSS */
+            :root {
+    --text-color: #ffffff;
+    --link-color: #ffffff;      /* Cambiado de #5af a #ffffff */
+    --button-text: white;
+}
+    
+    body,
+    p, h1, h2, h3, h4, h5, h6,
+    .section-title, .section-subtitle,
+    .card, .list-item, .spec-label, .spec-value,
+    .event-label, .event-date, .upload-note {
+        color: var(--text-color) !important;
+    }
+    
+    a:not(.minecraft-button) {
+        color: var(--link-color) !important;
+    }
+    
+    /* Excepciones (elementos que deben mantener su color) */
+    .minecraft-button {
+        color: var(--button-text) !important;
+    }
+    
+    .close {
+        color: white !important;
+    }
+    
+    /* Ajustes para mejor contraste */
+    .upload-note, .spec-label {
+        opacity: 0.8;
+    }
+
+        @font-face {
+            font-family: 'MinecraftTen';
+            src: url('assets/minecraft-ten.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'MinecraftFive';
+            src: url('assets/minecraft-five.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .grid-2 {
+                display: grid;
+                grid-template-columns: 1fr 1fr; /* Asegura que ambas columnas tengan el mismo ancho */
+                align-items: center; /* Alinea verticalmente */
+                gap: 20px; /* Espacio entre columnas */
+            }
+
+            .section-title {
+                font-size: 24px; /* Reduce el tamaño si es muy grande */
+                text-align: center;
+            }
+
+            p {
+                font-size: 16px; /* Ajusta si es necesario */
+                line-height: 1.5;
+            }
+
+
+        
+
+            body {
+                background-image: url('assets/fondo.png');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-color: #3D3D3B;
+                height: 100vh;
+                margin: 0;
+            }
+
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header styles */
+        .main-header {
+            background-color: #1D1D1B;
+            padding: 15px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-family: 'MinecraftTen', Arial, sans-serif;
+            font-size: 24px;
+            color: #FFFFFF;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-menu li {
+            margin: 0 15px;
+        }
+
+        .nav-menu a {
+            color: #FFFFFF;
+            text-decoration: none;
+            font-size: 16px;
+            text-transform: uppercase;
+            font-weight: bold;
+            padding: 5px 0;
+            position: relative;
+        }
+
+        .nav-menu a:hover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #5af;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-actions a {
+            color: #FFFFFF;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        /* Main content styles */
+        .page-title {
+            text-align: center;
+            padding: 40px 0;
+            font-family: 'MinecraftTen', Arial, sans-serif;
+            font-size: 48px;
+            color: #FFFFFF;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .content-wrapper {
+            display: flex;
+            margin-bottom: 50px;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #2D2D2B;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #3D3D3B;
+            text-decoration: none;
+            color: #FFFFFF;
+            transition: background-color 0.2s;
+        }
+
+        .sidebar-item:hover, .sidebar-item.active {
+            background-color: #3D3D3B;
+        }
+
+        .sidebar-item img {
+            width: 32px;
+            height: 32px;
+            margin-right: 15px;
+            image-rendering: pixelated;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 20px;
+            background-color: #2D2D2B;
+            border-radius: 4px;
+            padding: 20px;
+        }
+
+        /* Tab styles */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section-title {
+            font-family: 'MinecraftTen', Arial, sans-serif;
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #FFFFFF;
+            text-transform: uppercase;
+        }
+
+        .section-subtitle {
+            font-family: 'MinecraftTen', Arial, sans-serif;
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #FFFFFF;
+        }
+
+        .minecraft-button {
+            display: inline-block;
+            background-color: #5af;
+            color: white;
+            border: 2px solid #3a8;
+            border-bottom: 4px solid #297;
+            padding: 8px 16px;
+            font-family: 'MinecraftFive', Arial, sans-serif;
+            text-transform: uppercase;
+            text-decoration: none;
+            font-size: 14px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .minecraft-button:hover {
+            background-color: #7bf;
+        }
+
+        .minecraft-button:active {
+            border-bottom-width: 2px;
+            transform: translateY(2px);
+        }
+
+        .discord-button {
+            background-color: #5865F2;
+            border: 2px solid #4855E2;
+            border-bottom: 4px solid #3845D2;
+        }
+
+        .discord-button:hover {
+            background-color: #6975FF;
+        }
+
+        /* Grid layouts */
+        .grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .grid-2 {
+            grid-template-columns: 1fr;
+        }
+
+        .grid-3 {
+            grid-template-columns: 1fr;
+        }
+
+        @media (min-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .grid-3 {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+
+        /* Card styles */
+        .card {
+            background-color: #3D3D3B;
+            padding: 16px;
+            border-radius: 4px;
+        }
+
+        /* List styles */
+        .list-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .list-item-marker {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background-color: #5af;
+            margin-right: 12px;
+            margin-top: 4px;
+        }
+
+        .list-item-marker.red {
+            background-color: #f55;
+        }
+
+        /* Flex utilities */
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        /* Image placeholders */
+        .image-container {
+            width: 100%;
+            height: 200px;
+            background-color: #222;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #5af;
+            font-family: 'MinecraftFive', Arial, sans-serif;
+        }
+
+        /* Upload area */
+        .upload-area {
+            background-color: #222;
+            border: 2px dashed #555;
+            border-radius: 4px;
+            padding: 16px;
+            text-align: center;
+            color: #ccc;
+            margin-bottom: 16px;
+        }
+
+        /* Mod styles */
+        .mod-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .mod-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #5af;
+            border-radius: 4px;
+            margin-right: 12px;
+        }
+
+        /* Footer styles */
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: #aaa;
+            font-size: 14px;
+            margin-top: 40px;
+            border-top: 1px solid #333;
+        }
+
+        footer a {
+            color: #aaa;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        footer a:hover {
+            color: white;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .content-wrapper {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .mobile-menu-button {
+                display: block;
+            }
+        }
+
+        /* Mobile menu button (hidden by default) */
+        .mobile-menu-button {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .header-actions a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            text-transform: none; /* Remueve mayúsculas si lo prefieres */
+        }
+
+        .header-actions i.fab {
+            font-size: 18px;
+            color: #5865F2; /* Color oficial de Discord */
+        }
+
+
+    </style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-container">
+            <a href="#" class="logo">
+                <img src="assets/grass-block.png" alt="MushiServer Logo">
+                MushiServer
+            </a>
+            
+            <ul class="nav-menu">
+                <li><a href="#inicio" onclick="openTab('inicio')">Inicio</a></li>
+                <li><a href="#guia" onclick="openTab('guia')">Guía</a></li>
+                <li><a href="#galeria" onclick="openTab('galeria')">Galería</a></li>
+                <li><a href="#servidor" onclick="openTab('servidor')">Servidor</a></li>
+                <li><a href="#reglas" onclick="openTab('reglas')">Reglas</a></li>
+            </ul>
+            
+            <div class="header-actions">
+                <a href="https://discord.gg/f2Wa5fjQ" target="_blank">
+                    <i class="fab fa-discord"></i> Discord
+                </a>
+            </div>
+            
+            <button class="mobile-menu-button">☰</button>
+        </div>
+    </header>
+
+    <!-- Main Title -->
+    <h1 class="page-title">MushiServer</h1>
+
+    <!-- Content Wrapper -->
+    <div class="container">
+        <div class="content-wrapper">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <a href="#inicio" class="sidebar-item active" onclick="openTab('inicio')">
+                    <img src="assets/grass-block.png" alt="Inicio">
+                    Inicio
+                </a>
+                <a href="#guia" class="sidebar-item" onclick="openTab('guia')">
+                    <img src="assets/book.png" alt="Guía">
+                    Guía de Instalación
+                </a>
+                <a href="#galeria" class="sidebar-item" onclick="openTab('galeria')">
+                    <img src="assets/frame.png" alt="Galería">
+                    Galería
+                </a>
+                <a href="#servidor" class="sidebar-item" onclick="openTab('servidor')">
+                    <img src="assets/server.png" alt="Servidor">
+                    Sobre el Servidor
+                </a>
+                <a href="#reglas" class="sidebar-item" onclick="openTab('reglas')">
+                    <img src="assets/command-block.png" alt="Reglas">
+                    Reglas
+                </a>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Tab Inicio -->
+                <div id="inicio" class="tab-content active">
+                    <h2 class="section-title">¡Bienvenido a MushiServer!</h2>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <p>
+                                Estamos emocionados de anunciar el inicio de una nueva temporada de Minecraft en la versión 1.21.5
+                                MushiServer es una comunidad amigable donde podrás construir, explorar y divertirte con amigos.
+                            </p>
+                            <p>
+                                La temporada comenzará el 12 de abril de 2025. ¡Prepárate para la aventura!
+                            </p>
+                            
+                                                    <!-- Reemplaza esto en la sección "Inicio" -->
+                            <div style="margin-top: 24px; display: flex; flex-wrap: wrap; gap: 16px; justify-content: flex-start;">
+                                <a href="#guia" class="minecraft-button" onclick="openTab('guia')">
+                                    Cómo Jugar
+                                </a>
+                                <a href="https://discord.gg/f2Wa5fjQ" target="_blank" class="minecraft-button discord-button">
+                                    Únete al Discord
+                                </a>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
+                            <div class="image-container" style="aspect-ratio: 16/9; max-width: 800px;">
+                                <img src="assets/intro.png" alt="Logo MushiServer" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+               <!-- Tab Guía -->
+<div id="guia" class="tab-content">
+    <h2 class="section-title">Guía de Instalación</h2>
+    
+    <!-- Enlace MEGA destacado - Versión mejorada -->
+    <div class="card" style="
+        background-color: #3a3a3a; 
+        border-left: 4px solid #4CAF50; 
+        margin-bottom: 24px; 
+        text-align: center;
+    ">
+        <h3 class="section-subtitle" style="color: #ffffff; margin-bottom: 12px;">
+            Descarga todo en un solo paquete
+        </h3>
+        <p style="color: #ffffff; margin-bottom: 8px;">
+            Puedes descargar todos los archivos necesarios desde nuestro repositorio en MEGA:
+        </p>
+        <a href="https://mega.nz/folder/MRNXCABI#gB6s-8XQJgUsIbC4jgMSDQ" 
+           target="_blank" 
+           style="
+               color: #ffffff; 
+               font-weight: bold; 
+               text-decoration: none;
+               background-color: #4CAF50;
+               padding: 8px 16px;
+               border-radius: 4px;
+               display: inline-block;
+               margin-top: 8px;
+           ">
+           Repositorio completo MushiServer
+        </a>
+    </div>
+    
+    <div class="grid grid-2">
+        <div>
+            <div class="card">
+                <h3 class="section-subtitle">1. Instalar Hamachi</h3>
+                <p>
+                    Para conexión directa al servidor:
+                    <ul style="padding-left: 20px; margin-top: 10px;">
+                        <li>Instala Hamachi desde el link de MEGA</li>
+                        <li>Crea cuenta o inicia sesión</li>
+                        <li>Únete a una de nuestras redes</li>
+                    </ul>
+                </p>
+            </div>
+            <br>
+            <div class="card">
+                <h3 class="section-subtitle">2. Instalar Java</h3>
+                <p>
+                    Requerido para Minecraft 1.21.5:
+                    <ul style="padding-left: 20px; margin-top: 10px;">
+                        <li>Descarga Java desde el link de MEGA</li>
+                        <li>Verifica instalación con <code style="background: #222; padding: 2px 4px; border-radius: 3px;">java -version</code></li>
+                    </ul>
+                </p>
+            </div>
+        </div>
+        
+        <div>
+            <div class="card">
+                <h3 class="section-subtitle">3. Usar SK Launcher</h3>
+                <p>
+                    Alternativa al launcher oficial:
+                    <ul style="padding-left: 20px; margin-top: 10px;">
+                        <li>Descarga desde el link de MEGA</li>
+                        <li>Ejecuta en modo <strong>"sin conexión"</strong></li>
+                        <li>Instala la version 1.21.5</li>
+                    </ul>
+                </p>
+            </div>
+            <br>
+            <div class="card">
+                <h3 class="section-subtitle">4. Conectarse al Servidor</h3>
+                <p>
+                    <ul style="padding-left: 20px; margin-top: 10px;">
+                        <li><strong>Hamachi:</strong> Usa la IP que aparece en Hamachi</li>
+                        <li><strong>Versión:</strong> Minecraft 1.21.5</li>
+                    </ul>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div style="margin-top: 32px; text-align: center;">
+        <a href="https://discord.gg/f2Wa5fjQ" target="_blank" class="minecraft-button discord-button">
+            ¿Necesitas ayuda? Únete a nuestro Discord
+        </a>
+    </div>
+</div>
+
+<style>
+    /* Estilos adicionales para mejorar la lista */
+    ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+    
+    ul li {
+        position: relative;
+        padding-left: 20px;
+        margin-bottom: 8px;
+    }
+    
+    ul li:before {
+        content: "•";
+        color: #5af;
+        position: absolute;
+        left: 0;
+    }
+    
+    /* Iconos para enlaces */
+    .bi {
+        margin-right: 5px;
+    }
+</style>
+
+<!-- Tab Galería -->
+<div id="galeria" class="tab-content">
+    <h2 class="section-title">Galería de la Comunidad</h2>
+
+    <div class="grid grid-3">
+        <div class="card gallery-item">
+            <div class="image-container">
+                <img src="assets/server t1.jpg" alt="Temporada 1" class="gallery-img" loading="lazy" onclick="openModal(this)">
+            </div>
+            <p class="image-caption">Temporada 1</p>
+        </div>
+        <div class="card gallery-item">
+            <div class="image-container">
+                <img src="assets/server t2.png" alt="Temporada 2" class="gallery-img" loading="lazy" onclick="openModal(this)">
+            </div>
+            <p class="image-caption">
+                Temporada 2<br>
+                <a href="https://giacoiapedro.github.io/MushiServer/#fotos" target="_blank" style="color: #5af; font-size: 0.8em;">
+                    Ver más fotos de esta temporada
+                </a>
+            </p>
+        </div>
+        <div class="card gallery-item">
+            <div class="image-container">
+                <img src="assets/temporada 3.jpg" alt="Temporada 3" class="gallery-img" loading="lazy" onclick="openModal(this)">
+            </div>
+            <p class="image-caption">Temporada 3</p>
+        </div>
+
+        <!-- Puedes agregar más imágenes aquí siguiendo el mismo patrón -->
+
+        <div class="card share-card">
+            <h3 class="section-subtitle">Comparte tus Capturas</h3>
+            <p>¡Sube tus mejores momentos, construcciones y aventuras en MushiServer!</p>
+            
+            <div class="upload-area">
+                <p>Para compartir tus capturas, envíalas a través de nuestro Discord</p>
+                <a href="https://discord.gg/f2Wa5fjQ" target="_blank" class="minecraft-button discord-button">
+                    Unirse a Discord
+                </a>
+            </div>
+            
+            <p class="upload-note">
+                Las imágenes y videos serán revisados antes de ser publicados.<br>
+                Formatos aceptados: JPG, PNG, GIF, MP4.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para imágenes -->
+<div id="imageModal" class="modal" onclick="closeModal(event)">
+    <span class="close" onclick="closeModal(event)">&times;</span>
+    <div class="modal-container">
+        <img class="modal-content" id="modalImg">
+        <div class="image-title" id="modalTitle"></div>
+    </div>
+</div>
+
+<style>
+    /* Estilos mejorados para la galería */
+    .gallery-item {
+        transition: transform 0.3s ease;
+    }
+    
+    .gallery-item:hover {
+        transform: translateY(-5px);
+    }
+    
+    .image-container {
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 8px;
+        background-color: #1a1a1a;
+        cursor: pointer;
+    }
+    
+    .gallery-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    
+    .gallery-img:hover {
+        transform: scale(1.05);
+    }
+    
+    .image-caption {
+        text-align: center;
+        margin-top: 10px;
+        color: #ddd;
+        font-size: 14px;
+    }
+    
+    .share-card {
+        grid-column: span 3;
+        text-align: center;
+    }
+    
+    .upload-area {
+        padding: 20px;
+        margin: 15px 0;
+        background-color: #1a1a1a;
+        border-radius: 8px;
+        border: 2px dashed #444;
+    }
+    
+    .upload-note {
+        color: #999;
+        font-size: 13px;
+        margin-top: 15px;
+        line-height: 1.4;
+    }
+    
+    /* Estilos mejorados para el modal */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .modal.show {
+        display: flex;
+        opacity: 1;
+    }
+    
+    .modal-container {
+        position: relative;
+        max-width: 90%;
+        max-height: 90%;
+        text-align: center;
+    }
+    
+    .modal-content {
+        max-width: 100%;
+        max-height: 80vh;
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+    }
+    
+    .close {
+        position: absolute;
+        top: -40px;
+        right: -10px;
+        color: white;
+        font-size: 35px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+    
+    .close:hover {
+        color: #5af;
+    }
+    
+    .image-title {
+        color: white;
+        margin-top: 10px;
+        font-size: 18px;
+    }
+    
+    @media (max-width: 768px) {
+        .grid-3 {
+            grid-template-columns: 1fr;
+        }
+        
+        .share-card {
+            grid-column: span 1;
+        }
+        
+        .modal-content {
+            max-height: 60vh;
+        }
+    }
+</style>
+
+<script>
+    // Función para abrir el modal
+    function openModal(imgElement) {
+        const modal = document.getElementById("imageModal");
+        const modalImg = document.getElementById("modalImg");
+        const modalTitle = document.getElementById("modalTitle");
+        
+        modal.classList.add("show");
+        modalImg.src = imgElement.src;
+        modalTitle.textContent = imgElement.alt;
+        
+        // Deshabilitar scroll de fondo
+        document.body.style.overflow = "hidden";
+    }
+    
+    // Función para cerrar el modal
+    function closeModal(event) {
+        // Evitar que el evento se propague al modal
+        if (event) {
+            if (event.target.classList.contains('modal') || event.target.classList.contains('close')) {
+                const modal = document.getElementById("imageModal");
+                modal.classList.remove("show");
+                
+                // Habilitar scroll de fondo
+                document.body.style.overflow = "auto";
+            }
+        }
+    }
+    
+    // Cerrar con tecla ESC
+    document.addEventListener('keydown', function(event) {
+        if (event.key === "Escape") {
+            closeModal();
+        }
+    });
+</script>
+
+                <!-- Tab Servidor - Versión corregida -->
+<div id="servidor" class="tab-content">
+    <h2 class="section-title">Sobre el Servidor</h2>
+    
+    <div class="grid grid-2">
+        <div>
+            <div class="card server-features">
+                <h3 class="section-subtitle">¿Qué esperar?</h3>
+                <ul class="feature-list">
+                    <li class="list-item">
+                        <div class="list-item-marker"></div>
+                        <span>Mundo abierto con generación personalizada</span>
+                    </li>
+                    <li class="list-item">
+                        <div class="list-item-marker"></div>
+                        <span>Economía basada en diamantes y esmeraldas </span>
+                    </li>
+                    <li class="list-item">
+                        <div class="list-item-marker"></div>
+                        <span>Eventos</span>
+                    </li>
+                    <li class="list-item">
+                        <div class="list-item-marker"></div>
+                        <span>Comunidad amigable y colaborativa</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="card server-rules">
+                <h3 class="section-subtitle">Reglas</h3>
+                <ul class="rules-list">
+                    <li class="list-item">
+                        <div class="list-item-marker red"></div>
+                        <span>No griefing ni robo de items</span>
+                    </li>
+                    <li class="list-item">
+                        <div class="list-item-marker red"></div>
+                        <span>Respeta a todos los jugadores</span>
+                    </li>
+                    <li class="list-item">
+                        <div class="list-item-marker red"></div>
+                        <span>No usar hacks ni mods no permitidos</span>
+                    </li>
+                    <li class="list-item">
+                        <div class="list-item-marker red"></div>
+                        <span>No spam ni publicidad no autorizada</span>
+                    </li>
+                    <li class="list-item">
+                        <div class="list-item-marker red"></div>
+                        <span>Leer la sección de reglas para mas información</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div>
+            <div class="card server-specs">
+                <h3 class="section-subtitle">Características Técnicas</h3>
+                <div class="spec-item">
+                    <span class="spec-label">Versión:</span>
+                    <span class="spec-value">Minecraft 1.21.5</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Tipo de Servidor:</span>
+                    <span class="spec-value">Survival sin mods</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Dificultad:</span>
+                    <span class="spec-value">Dificil</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">PvP:</span>
+                    <span class="spec-value">Opcional (Zonas designadas)</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Slots:</span>
+                    <span class="spec-value">50 jugadores</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Ubicación del Servidor:</span>
+                    <span class="spec-value">América del Sur</span>
+                </div>
+            </div>
+            
+            <div class="card server-calendar">
+                <h3 class="section-subtitle">Calendario</h3>
+                <div class="calendar-item">
+                    <span class="event-label">Lanzamiento:</span>
+                    <span class="event-date">12 de Abril, 2025</span>
+                </div>
+                <div class="calendar-item">
+                    <span class="event-label">Evento de Inauguración:</span>
+                    <span class="event-date">12 de Abril, 20:00 GMT-3</span>
+                </div>
+                <div class="calendar-item">
+                    <span class="event-label">Finalizacion:</span>
+                    <span class="event-date">12 de mayo, 2025</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Estilos mejorados para la sección del servidor */
+    .server-features, .server-rules, .server-specs, .server-calendar {
+        margin-bottom: 24px;
+        padding: 20px;
+    }
+    
+    .feature-list, .rules-list {
+        list-style: none;
+        padding-left: 0;
+    }
+    
+    .list-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+        padding: 8px 0;
+    }
+    
+    .list-item-marker {
+        width: 16px;
+        height: 16px;
+        background-color: #5af;
+        margin-right: 12px;
+        border-radius: 50%;
+    }
+    
+    .list-item-marker.red {
+        background-color: #f55;
+    }
+    
+    .spec-item, .calendar-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding: 8px 0;
+        border-bottom: 1px solid #3a3a3a;
+    }
+    
+    .spec-label, .event-label {
+        color: #aaa;
+    }
+    
+    .spec-value, .event-date {
+        font-weight: bold;
+        color: #fff;
+    }
+    
+    @media (max-width: 768px) {
+        .grid-2 {
+            grid-template-columns: 1fr;
+        }
+        
+        .server-features, .server-rules, .server-specs, .server-calendar {
+            margin-bottom: 16px;
+        }
+    }
+</style>
+
+
+                <!-- Tab Reglas -->
+<!-- Tab Reglas -->
+<div id="reglas" class="tab-content">
+    <h2 class="section-title">Reglas del Servidor</h2>
+  
+    
+    <div class="card" style="background-color: #2a2a28; border-left: 4px solid #5af; margin-bottom: 24px;">
+        <h3 class="section-subtitle">CONVENIO URBANO DE MUSHI SERVER</h3>
+        <p style="font-style: italic; margin-bottom: 16px;">
+            Vigente desde 12 Abril 2025 hasta la finalización del SV.
+        </p>
+        <p>
+            En vísperas de iniciar una nueva aventura veraniega en el server de Don Pepe Giacoia, se va a realizar este presente convenio para designar puntos en común, y regular la actividad urbano-arquitectónica del server.
+        </p>
+    </div>
+
+    <div class="grid grid-2">
+        <div>
+            <div class="card">
+                <h3 class="section-subtitle">Requerimientos para unirse</h3>
+                <ul class="rules-list">
+                    <li class="list-item">
+                        <div class="list-item-marker"></div>
+                        <span>Aceptar jugar al SV en comunidad, entendiendo que forma parte de un todo donde sus acciones alteran al resto</span>
+                    </li>
+                    <li class="list-item">
+                        <div class="list-item-marker"></div>
+                        <span>Mantener conductas decentes en espacios comunes y privados</span>
+                    </li>
+                    <li class="list-item">
+                        <div class="list-item-marker"></div>
+                        <span>Respetar el Código de Urbanidad</span>
+                    </li>
+                    <li class="list-item">
+                        <div class="list-item-marker red"></div>
+                        <span>Prohibido actos de terrorismo, genocidio animal/humano o troleos destructivos</span>
+                    </li>
+                    <li class="list-item">
+                        <div class="list-item-marker red"></div>
+                        <span>Uso de hacks/cheats prohibido - sancionado por mayoría simple (2/3)</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h3 class="section-subtitle">Código Urbano</h3>
+                <ul class="rules-list">
+                    <li class="list-item">
+                        <div class="list-item-marker red"></div>
+                        <span>No construcciones voladoras descontextualizadas</span>
+                    </li>
+                    <li class="list-item">
+                        <div class="list-item-marker red"></div>
+                        <span>Prohibido alterar el Skyline negativamente</span>
+                    </li>
+                    <li class="list-item">
+                        <div class="list-item-marker red"></div>
+                        <span>No construir en parcelas ajenas sin consentimiento</span>
+                    </li>
+                    <li class="list-item">
+                        <div class="list-item-marker red"></div>
+                        <span>Prohibidos cubos simples sin ventanas estilo soviético</span>
+                    </li>
+                    <li class="list-item">
+                        <div class="list-item-marker"></div>
+                        <span>Permitido cualquier estilo arquitectónico respetando belleza básica</span>
+                    </li>
+                    <li class="list-item">
+                        <div class="list-item-marker red"></div>
+                        <span>Prohibido modificar zonas comunes sin autorización</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div>
+            <div class="card">
+                <h3 class="section-subtitle">Autoridad de Urbanidad y Estética</h3>
+                <p style="margin-bottom: 12px;">
+                    Conformada por 3 personas elegidas por la comunidad. Decisiones por mayoría simple (2/3).
+                </p>
+                <div class="spec-item">
+                    <span class="spec-label">Competencias:</span>
+                    <ul style="padding-left: 20px; margin-top: 8px;">
+                        <li>Construcción/modificación de calles, caminos y conexiones</li>
+                        <li>Modificaciones al Código de Urbanidad</li>
+                        <li>Resolución de conflictos entre jugadores</li>
+                        <li>Decisiones sobre estética general del SV</li>
+                        <li>Modificación/supresión de construcciones que incumplan normas</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="section-subtitle">Definición de Espacios</h3>
+                <div class="spec-item">
+                    <span class="spec-label" style="color: #5af;">Comunes:</span>
+                    <ul style="padding-left: 20px; margin-top: 8px;">
+                        <li>Caminos, pasillos y accesos a la ciudad</li>
+                        <li>Zona aérea sobre estos elementos</li>
+                        <li>Costas, bahías y zonas marítimas (200 bloques)</li>
+                        <li>Mazmorras y estructuras generadas naturalmente</li>
+                    </ul>
+                </div>
+                <div class="spec-item" style="margin-top: 16px;">
+                    <span class="spec-label" style="color: #5af;">Privados:</span>
+                    <ul style="padding-left: 20px; margin-top: 8px;">
+                        <li>Zonas propiedad de cada jugador (hogar/residencia)</li>
+                        <li>Túneles y canales privados bajo sus casas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card" style="text-align: center; margin-top: 24px; background-color: #2a2a28;">
+        <h3 class="section-subtitle">YAGAMI LAITO…… KOKOROTO…… MATSUDA…. TOYOTA….</h3>
+        <p style="font-style: italic;">
+            Instrumento confeccionado por JorgeCafruneMC
+        </p>
+    </div>
+</div>
+
+<style>
+    /* Estilos específicos para la sección de Reglas */
+    .rules-list {
+        list-style: none;
+        padding-left: 0;
+    }
+    
+    .list-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 12px;
+        padding: 8px 0;
+    }
+    
+    .list-item-marker {
+        width: 16px;
+        height: 16px;
+        background-color: #5af;
+        margin-right: 12px;
+        margin-top: 4px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+    
+    .list-item-marker.red {
+        background-color: #f55;
+    }
+    
+    .spec-item {
+        margin-bottom: 12px;
+    }
+    
+    .spec-label {
+        color: #5af;
+        font-weight: bold;
+        display: block;
+        margin-bottom: 8px;
+    }
+    
+    @media (max-width: 768px) {
+        .grid-2 {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+        <footer>
+            <p>MushiServer &copy; 2025 - No afiliado con Mojang Studios</p>
+            <div style="margin-top: 16px;">
+                <a href="https://discord.gg/f2Wa5fjQ" target="_blank">Discord</a>
+                <a href="#Reglas"  onclick="openTab('reglas')">Reglas del Servidor</a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function openTab(tabName) {
+            // Hide all tab content
+            var tabContents = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+            
+            // Show the selected tab content
+            document.getElementById(tabName).classList.add("active");
+            
+            // Update sidebar active state
+            var sidebarItems = document.getElementsByClassName("sidebar-item");
+            for (var i = 0; i < sidebarItems.length; i++) {
+                sidebarItems[i].classList.remove("active");
+                if (sidebarItems[i].getAttribute("href") === "#" + tabName) {
+                    sidebarItems[i].classList.add("active");
+                }
+            }
+        }
+
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            var mobileMenuButton = document.querySelector('.mobile-menu-button');
+            var navMenu = document.querySelector('.nav-menu');
+            
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', function() {
+                    navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
