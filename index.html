@@ -531,6 +531,7 @@ a:not(.minecraft-button):hover {
     </style>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 </head>
 <body>
     <!-- Header -->
@@ -547,6 +548,7 @@ a:not(.minecraft-button):hover {
                 <li><a href="#galeria" onclick="openTab('galeria')">Galería</a></li>
                 <li><a href="#servidor" onclick="openTab('servidor')">Servidor</a></li>
                 <li><a href="#reglas" onclick="openTab('reglas')">Reglas</a></li>
+                <li><a href="#admin" onclick="openTab('admin')">Admin</a></li>
             </ul>
             
             <div class="header-actions">
@@ -586,6 +588,10 @@ a:not(.minecraft-button):hover {
                 <a href="#reglas" class="sidebar-item" onclick="openTab('reglas')">
                     <img src="assets/command-block.png" alt="Reglas">
                     Reglas
+                </a>
+                <a href="#admin" class="sidebar-item" onclick="openTab('admin')">
+                <img src="assets/command-block.png" alt="Admin">
+                  Admin
                 </a>
             </div>
 
@@ -1193,6 +1199,32 @@ a:not(.minecraft-button):hover {
     }
 </style>
 
+<div id="admin" class="tab-content">
+    <h2 class="section-title">Mención Honorífica</h2>
+    <div class="card" style="text-align: center;">
+        <h3 class="section-subtitle">El Administrador</h3>
+        <p style="margin-bottom: 16px;">
+            En esta temporada, rendimos homenaje a nuestro sabio y justo administrador...
+        </p>
+        <p style="font-style: italic; margin-bottom: 24px;">
+            Como todo buen maestro, camina entre nosotros con el aspecto de un legendario Jedi...
+        </p>
+
+        <div style="margin-bottom: 16px;">
+            <h4 style="margin-top: 24px;">Obi Wan</h4>
+            <!-- SOLO UN CANVAS - ELIMINA EL OTRO -->
+            <canvas id="skin_container" width="300" height="400" style="margin-top: 10px;"></canvas>
+            <p style="color: #aaa; font-size: 14px; margin-top: 10px;">
+                Haz clic derecho en el visor para guardar la skin o verla en 3D.
+            </p>
+            <p style="color: #aaa; font-size: 14px;">
+                Haz clic en la imagen para ver o descargar su skin.
+            </p>
+        </div>
+    </div>
+</div>
+
+
 
                 <!-- Tab Reglas -->
 <!-- Tab Reglas -->
@@ -1372,38 +1404,101 @@ a:not(.minecraft-button):hover {
         </footer>
     </div>
 
+        <!-- LIBRERÍA DE SKINVIEW3D -->
+    <script src="https://cdn.jsdelivr.net/npm/skinview3d@1.8.0/dist/skinview3d.min.js"></script>
+
+    <!-- TU SCRIPT CORREGIDO Y ROBUSTO -->
     <script>
-        function openTab(tabName) {
-            // Hide all tab content
-            var tabContents = document.getElementsByClassName("tab-content");
-            for (var i = 0; i < tabContents.length; i++) {
-                tabContents[i].classList.remove("active");
-            }
-            
-            // Show the selected tab content
-            document.getElementById(tabName).classList.add("active");
-            
-            // Update sidebar active state
-            var sidebarItems = document.getElementsByClassName("sidebar-item");
-            for (var i = 0; i < sidebarItems.length; i++) {
-                sidebarItems[i].classList.remove("active");
-                if (sidebarItems[i].getAttribute("href") === "#" + tabName) {
-                    sidebarItems[i].classList.add("active");
-                }
-            }
+    let skinViewer = null;
+
+    function openTab(tabName) {
+        // Ocultar y mostrar las pestañas (código sin cambios)
+        const tabContents = document.getElementsByClassName("tab-content");
+        for (let i = 0; i < tabContents.length; i++) {
+            tabContents[i].classList.remove("active");
         }
 
-        // Mobile menu toggle
-        document.addEventListener('DOMContentLoaded', function() {
-            var mobileMenuButton = document.querySelector('.mobile-menu-button');
-            var navMenu = document.querySelector('.nav-menu');
-            
-            if (mobileMenuButton) {
-                mobileMenuButton.addEventListener('click', function() {
-                    navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
-                });
+        const sidebarItems = document.getElementsByClassName("sidebar-item");
+        for (let i = 0; i < sidebarItems.length; i++) {
+            sidebarItems[i].classList.remove("active");
+            if (sidebarItems[i].getAttribute("href") === "#" + tabName) {
+                sidebarItems[i].classList.add("active");
             }
-        });
+        }
+        
+        const selectedTab = document.getElementById(tabName);
+        if (selectedTab) {
+            selectedTab.classList.add("active");
+        }
+
+        // Si la pestaña es "admin", llamamos a la función que se asegura
+        // de que todo esté listo antes de continuar.
+        if (tabName === "admin") {
+            initializeViewerWhenReady();
+        }
+    }
+
+    function initializeViewerWhenReady() {
+        // Si el visor ya fue creado, no hacemos nada más.
+        if (skinViewer) {
+            return;
+        }
+
+        // **LA LÓGICA CLAVE ESTÁ AQUÍ**
+        // Verificamos si la variable global 'skinview3d' existe.
+        if (typeof skinview3d !== 'undefined') {
+            // ¡Perfecto! La librería está cargada. Ahora podemos inicializar el visor.
+            initSkinViewer();
+        } else {
+            // La librería aún no está lista.
+            // Le pedimos al navegador que vuelva a intentar esta misma función en 100ms.
+            console.log("Esperando a que la librería skinview3d se cargue...");
+            setTimeout(initializeViewerWhenReady, 100);
+        }
+    }
+
+    function initSkinViewer() {
+        const canvas = document.getElementById("skin_container");
+        if (!canvas) {
+            console.error("El canvas 'skin_container' no fue encontrado.");
+            return;
+        }
+
+        try {
+            // Ahora es seguro llamar a 'new skinview3d.SkinViewer'
+            skinViewer = new skinview3d.SkinViewer({
+                canvas: canvas,
+                width: 300,
+                height: 400,
+                skin: 'assets/2022_09_13_obi-wan-20843585.png'
+            });
+
+            skinViewer.animation = new skinview3d.WalkingAnimation();
+            skinViewer.autoRotate = true;
+
+            console.log("Visor de skin inicializado correctamente.");
+        } catch (error) {
+            console.error("Error final al inicializar el visor de skin:", error);
+        }
+    }
+
+    function checkSkinExists() {
+        const skinPath = 'assets/2022_09_13_obi-wan-20843585.png';
+        const img = new Image();
+        img.onload = () => console.log("La skin existe en la ruta especificada.");
+        img.onerror = () => console.error(`Error: No se pudo cargar la skin desde: ${skinPath}`);
+        img.src = skinPath;
+    }
+
+    // El punto de entrada de la aplicación sigue siendo el mismo.
+    document.addEventListener("DOMContentLoaded", () => {
+        openTab("inicio");
+        checkSkinExists();
+    });
     </script>
+</body>
+</html>
+
+
 </body>
 </html>
